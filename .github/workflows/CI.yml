@@ -1,0 +1,36 @@
+name: CI
+
+on:
+   push:
+     branches:
+       - master
+   pull_request:
+     branches:
+       - '*'
+
+jobs:
+  test-macOS:
+    runs-on: macOS-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Cache Dependencies
+      uses: actions/cache@v1
+      with:
+        path: .build
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+
+    - name: Run Tests on macOS
+      run: swift test
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Run SwiftLint Checks
+      uses: norio-nomura/action-swiftlint@3
+      with:
+        args: --strict
