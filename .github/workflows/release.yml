@@ -1,0 +1,43 @@
+name: CI
+
+on:
+   push:
+     branches:
+       - master
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macOS-latest
+
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: YOCKOW/Action-setup-swift@master
+      with:
+        swift-version: '5.1.4'
+
+    - uses: actions/checkout@master
+
+    - name: Cache Dependencies
+      uses: actions/cache@master
+      with:
+        path: .build
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+
+    - run: swift test
+
+
+  swiftlint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+
+    - name: Run SwiftLint Checks
+      uses: norio-nomura/action-swiftlint@master
+      with:
+        args: --strict
