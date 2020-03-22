@@ -29,6 +29,6 @@ let package = Package(
 			dependencies: [.target(name: "AppParser")]),
 		.testTarget(
 			name: "AppParserKitTests",
-			dependencies: [.target(name: "AppParserKit")]),
+			dependencies: [.target(name: "AppParserKit")])
 	]
 )
