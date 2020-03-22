@@ -34,12 +34,11 @@ private extension FileManager {
 	/// - Note: You should not rely on the existence of the temporary directory
 	///   after the app is exited.
 	func urlForUniqueTemporaryDirectory(preferredName: String? = nil) throws
-		-> (url: URL, deleteDirectory: () throws -> Void)
-	{
+		-> (url: URL, deleteDirectory: () throws -> Void) {
 		let basename = preferredName ?? UUID().uuidString
 
 		var counter = 0
-		var createdSubdirectory: URL? = nil
+		var createdSubdirectory: URL?
 		repeat {
 			do {
 				let subdirName = counter == 0 ? basename : "\(basename)-\(counter)"

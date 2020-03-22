@@ -1,9 +1,9 @@
 /// Contains Metadata parsed from a .apk or .apk file
 public struct AppMetadata: Encodable {
-	/// Reverse-dot notation unique identifier
+	/// Reverse dot-notation unique identifier
 	///
 	/// Example: `"com.domain.appname"`
-	public let id: String
+	public let identifier: String
 
 	/// The marketing version numer
 	///

@@ -17,7 +17,7 @@ public enum IpaParser {
 		let payloadDir = tempFile.directoryURL.path.appending("/Payload/")
 		guard let appDir = try FileManager.default
 			.contentsOfDirectory(atPath: payloadDir)
-			.first(where:  { $0.hasSuffix(".app") })
+			.first(where: { $0.hasSuffix(".app") })
 			else { throw CorruptIPAStructure() }
 
 		let infoPlistURL = URL(fileURLWithPath: payloadDir)

@@ -1,7 +1,6 @@
 import Foundation
 
 func unzip(at source: URL, to dest: URL) {
-
 	shell("""
 		unzip -qq \
 		"\(source.path)" \
@@ -11,9 +10,8 @@ func unzip(at source: URL, to dest: URL) {
 		""")
 }
 
-
 @discardableResult
-func shell(_ args: String...) -> Int32 {
+private func shell(_ args: String...) -> Int32 {
 	let task = Process()
 	task.launchPath = "/bin/sh"
 	task.arguments = ["-c"] + args
