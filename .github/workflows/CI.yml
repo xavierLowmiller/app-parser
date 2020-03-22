@@ -25,6 +25,27 @@ jobs:
     - name: Run Tests on macOS
       run: swift test
 
+  test-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: YOCKOW/Action-setup-swift@master
+      with:
+        swift-version: '5.1.4'
+
+    - uses: actions/checkout@v2
+
+    - name: Cache Dependencies
+      uses: actions/cache@v1
+      with:
+        path: .build
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+
+    - name: Run Tests on macOS
+      run: swift test --generate-linuxmain
+
+
   swiftlint:
     runs-on: ubuntu-latest
     steps:
