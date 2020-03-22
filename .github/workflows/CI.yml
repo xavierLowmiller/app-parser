@@ -9,24 +9,14 @@ on:
        - '*'
 
 jobs:
-  test-macOS:
-    runs-on: macOS-latest
-    steps:
-    - uses: actions/checkout@v2
+  test:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macOS-latest
 
-    - name: Cache Dependencies
-      uses: actions/cache@v1
-      with:
-        path: .build
-        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
-        restore-keys: |
-          ${{ runner.os }}-spm-
-
-    - name: Run Tests on macOS
-      run: swift test
-
-  test-linux:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: YOCKOW/Action-setup-swift@master
       with:
@@ -42,8 +32,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-spm-
 
-    - name: Run Tests on macOS
-      run: swift test --generate-linuxmain
+    - run: swift test
 
 
   swiftlint:
