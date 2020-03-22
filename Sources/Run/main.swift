@@ -1,0 +1,3 @@
+import AppParser
+
+AppParser.main()
