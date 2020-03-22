@@ -2,8 +2,8 @@ name: CI
 
 on:
    push:
-     branches:
-       - master
+     tags:
+     - '*'
 
 jobs:
   test:
@@ -29,15 +29,4 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-spm-
 
-    - run: swift test
-
-
-  swiftlint:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@master
-
-    - name: Run SwiftLint Checks
-      uses: norio-nomura/action-swiftlint@master
-      with:
-        args: --strict
+    - run: swift build -c release
