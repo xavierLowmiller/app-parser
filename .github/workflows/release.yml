@@ -19,7 +19,6 @@ jobs:
     - uses: actions/checkout@master
 
     - name: Cache Swift Version
-      id: cache-swift
       uses: actions/cache@master
       with:
         path: .swiftenv
@@ -30,7 +29,6 @@ jobs:
     - uses: YOCKOW/Action-setup-swift@master
       with:
         swift-version: '5.1.4'
-      if: steps.cache-swift.outputs.cache-hit != 'true'
 
     - name: Cache Dependencies
       uses: actions/cache@master
