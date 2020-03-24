@@ -1,0 +1,42 @@
+name: Release
+
+on:
+   push:
+     tags:
+     - '*'
+
+jobs:
+  release:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macOS-latest
+
+    runs-on: ${{ matrix.os }}
+    steps:
+
+    - uses: actions/checkout@master
+
+    - uses: YOCKOW/Action-setup-swift@master
+      with:
+        swift-version: '5.1.4'
+
+    - name: Cache Dependencies
+      uses: actions/cache@master
+      with:
+        path: .build
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+
+    - run: swift build -c release
+
+    - run: zip app-parser-${{ matrix.os }}.zip .build/release/app-parser
+
+    - name: Release
+      uses: softprops/action-gh-release@master
+      with:
+        files: app-parser-${{ matrix.os }}.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,2 +1,4 @@
 excluded:
-  .build
+  - .build
+  - Tests/**/XCTestManifests.swift
+  - Tests/**/LinuxMain.swift
