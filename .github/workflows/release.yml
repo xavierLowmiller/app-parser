@@ -35,7 +35,7 @@ jobs:
     - run: zip app-parser-${{ matrix.os }}.zip .build/release/app-parser
 
     - name: Release
-      uses: softprops/action-gh-release@masters
+      uses: softprops/action-gh-release@master
       with:
         files: app-parser-${{ matrix.os }}.zip
       env:
