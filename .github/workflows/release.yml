@@ -16,6 +16,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
 
+    - uses: actions/checkout@master
+
     - name: Cache Swift Version
       id: cache-swift
       uses: actions/cache@master
@@ -29,8 +31,6 @@ jobs:
       with:
         swift-version: '5.1.4'
       if: steps.cache-swift.outputs.cache-hit != 'true'
-
-    - uses: actions/checkout@master
 
     - name: Cache Dependencies
       uses: actions/cache@master
