@@ -15,9 +15,20 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
+
+    - name: Cache Swift Version
+      id: cache-swift
+      uses: actions/cache@latest
+      with:
+        path: .swiftenv
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+
     - uses: YOCKOW/Action-setup-swift@master
       with:
         swift-version: '5.1.4'
+      if: steps.cache-swift.outputs.cache-hit != 'true'
 
     - uses: actions/checkout@master
 
