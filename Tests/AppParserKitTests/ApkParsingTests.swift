@@ -18,10 +18,11 @@ final class ApkParsingTests: XCTestCase {
 	}
 }
 
+private let aaptPath = (#file.components(separatedBy: "/")
+	.dropLast() + [aaptName]).joined(separator: "/")
+
 #if os(macOS)
-private let aaptPath = (#file.components(separatedBy: "/")
-	.dropLast() + ["aapt-macOS"]).joined(separator: "/")
+private let aaptName = "aapt-macOS"
 #elseif os(Linux)
-private let aaptPath = (#file.components(separatedBy: "/")
-	.dropLast() + ["aapt-linux"]).joined(separator: "/")
+private let aaptName = "aapt-linux"
 #endif
