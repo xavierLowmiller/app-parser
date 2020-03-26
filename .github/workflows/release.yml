@@ -20,7 +20,7 @@ jobs:
 
     - uses: YOCKOW/Action-setup-swift@master
       with:
-        swift-version: '5.1.5'
+        swift-version: '5.1.4'
 
     - name: Cache Dependencies
       uses: actions/cache@master
