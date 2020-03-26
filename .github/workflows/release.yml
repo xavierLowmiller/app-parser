@@ -21,7 +21,9 @@ jobs:
     - name: Cache Swift Version
       uses: actions/cache@master
       with:
-        path: /home/runner/action-setup-swift-workspace
+        path: |
+          /home/runner/action-setup-swift-workspace
+          ~/.swiftenv
         key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
         restore-keys: |
           ${{ runner.os }}-spm-
