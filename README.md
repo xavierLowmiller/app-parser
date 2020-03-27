@@ -5,7 +5,7 @@
 
 # app-parser
 
-Parses metadata from `.apk` and `.ipa` files
+Parse metadata from `.apk` and `.ipa` files
 
 ## Features
 
