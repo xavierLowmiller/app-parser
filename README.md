@@ -7,14 +7,22 @@
 
 Parses metadata from `.apk` and `.ipa` files
 
+```sh
+$ app-parser example.ipa
+```
+
+## 🚨🔥⚠️ Android notice
+
+For this
+
 ## Features
 
-| Android | iOS                | Feature                   |
-| ------- | ------------------ | ------------------------- |
-| :x:     | :white_check_mark: | Display Name              |
-| :x:     | :white_check_mark: | Version                   |
-| :x:     | :white_check_mark: | Bundle/Package Identifier |
-| :x:     | :white_check_mark: | OS                        |
-| :x:     | :x:                | Minimum OS Version        |
-| :x:     | :x:                | Icons                     |
+| Android | iOS | Feature                   |
+| ------- | --- | ------------------------- |
+| ❌      | ✅  | Display Name              |
+| ✅      | ✅  | Version                   |
+| ✅      | ✅  | Bundle/Package Identifier |
+| ✅      | ✅  | OS                        |
+| ❌      | ❌  | Minimum OS Version        |
+| ❌      | ❌  | Icons                     |
 
