@@ -12,10 +12,7 @@ func axmlToXml(_ axml: Data) throws -> Data {
 	let strings = try bytes.parseStrings()
 	try bytes.validateResources()
 
-
-	let data = try bytes.parseTags(strings: strings)
-
-	return data
+	return try bytes.parseTags(strings: strings)
 }
 
 private extension Array where Element == UInt8 {
@@ -103,6 +100,7 @@ private extension Array where Element == UInt8 {
 		var xmlLines = [#"<?xml version="1.0" encoding="utf-8"?>"#]
 
 		var currentNamespace: String? = nil
+		var indentationLevel = 0
 
 		while !isEmpty {
 			let rawValue = nextWord()
@@ -140,13 +138,15 @@ private extension Array where Element == UInt8 {
 				}.joined(separator: " ")
 
 				let name = strings[Int(tagName)]
-				xmlLines.append("<\(name) \(attributes)>")
+				xmlLines.append(spaces(for: indentationLevel) + "<\(name) \(attributes)>")
+				indentationLevel += 1
 			case .endTag:
+				indentationLevel -= 1
 				let tagUri = nextWord()
 				let tagName = nextWord()
 
 				let name = strings[Int(tagName)]
-				xmlLines.append("</\(name)>")
+				xmlLines.append(spaces(for: indentationLevel) + "</\(name)>")
 			case .text:
 				break
 			}
@@ -188,6 +188,10 @@ private extension Array where Element == UInt8 {
 	mutating func skipWords(_ amount: UInt32) {
 		removeFirst(4 * Int(amount))
 	}
+}
+
+private func spaces(for indentation: Int) -> String {
+	String([Character](repeating: " ", count: indentation * 4))
 }
 
 enum AxmlError: Error {
