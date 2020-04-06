@@ -79,20 +79,38 @@ private extension Array where Element == UInt8 {
 	}
 
 	private struct Attribute {
-		let id: UInt32
+		let uri: UInt32
 		let key: UInt32
 		let value: UInt32
 		let type: UInt32
 		let data: UInt32
 
 
-		func resolve(in strings: [String]) -> String {
+		func resolve(in strings: [String], namespace: String?, namespaceCode: UInt32?) -> String {
 			let key = strings[Int(self.key)]
-			let value = self.value == .max
-				? "resourceID 0x" + String(data, radix: 16)
-				: strings[Int(self.value)]
+			let value: String
+			switch type {
+			// Reference
+			case 1:
+				if data >> 24 == 1 {
+					value = "@android:" + String(data, radix: 16, uppercase: true)
+				} else {
+					value = "@" + String(data, radix: 16, uppercase: true)
+				}
+			// String
+			case 3:
+				value = strings[Int(self.value)]
+			// Bool
+			case 18:
+				value = data == 0 ? "false" : "true"
+			default:
+				value = "\(data)"
+			}
 
-			return "\(key)=\"\(value)\""
+			let prefixedKey = key
+				.withNamespacePrefix(namespace, shouldPrefix: uri == namespaceCode)
+
+			return "\(prefixedKey)=\"\(value)\""
 		}
 	}
 
@@ -100,6 +118,7 @@ private extension Array where Element == UInt8 {
 		var xmlLines = [#"<?xml version="1.0" encoding="utf-8"?>"#]
 
 		var currentNamespace: String? = nil
+		var namespaceUrlCode: UInt32? = nil
 		var namespaceUrl: String? = nil
 		var indentationLevel = 0
 
@@ -117,11 +136,14 @@ private extension Array where Element == UInt8 {
 				let prefix = nextWord()
 				let uri = nextWord()
 				currentNamespace = strings[Int(prefix)]
+				namespaceUrlCode = uri
 				namespaceUrl = strings[Int(uri)]
 			case .endNamespace:
 				removeFirst(4) // class attribute, unused
 				removeFirst(4) // class attribute, unused
 				currentNamespace = nil
+				namespaceUrlCode = nil
+				namespaceUrl = nil
 			case .startTag:
 				let tagUri = nextWord()
 				let tagName = nextWord()
@@ -131,14 +153,13 @@ private extension Array where Element == UInt8 {
 
 				let attributes = (0..<attributeCount).map { _ in
 					Attribute(
-						id: nextWord(),
+						uri: nextWord(),
 						key: nextWord(),
 						value: nextWord(),
 						type: nextWord() >> 24,
 						data: nextWord()
-					).resolve(in: strings)
+					).resolve(in: strings, namespace: currentNamespace, namespaceCode: namespaceUrlCode)
 				}
-				.map { $0.withNamespacePrefix(currentNamespace) }
 
 				let namespaceUrlAttribute: String?
 				if let _namespaceUrl = namespaceUrl {
@@ -209,8 +230,8 @@ private func spaces(for indentation: Int) -> String {
 }
 
 private extension String {
-	func withNamespacePrefix(_ prefix: String?) -> String {
-		if let prefix = prefix {
+	func withNamespacePrefix(_ prefix: String?, shouldPrefix: Bool) -> String {
+		if shouldPrefix, let prefix = prefix {
 			return prefix + ":" + self
 		} else {
 			return self
