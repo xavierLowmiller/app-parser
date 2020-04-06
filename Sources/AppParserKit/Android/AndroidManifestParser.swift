@@ -3,7 +3,8 @@ final class AndroidManifestParser: NSObject, XMLParserDelegate {
 
 	var identifier: String?
 	var version: String?
-	var displayName: String?
+	// TODO: Parse this from somewhere
+//	var displayName: String?
 
 	func parser(
 		_ parser: XMLParser,

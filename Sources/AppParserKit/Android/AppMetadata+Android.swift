@@ -5,12 +5,12 @@ extension AppMetadata {
 			else { throw ApkParseError.missingPackageName }
 		guard let version = parser.version
 			else { throw ApkParseError.missingAppVersion }
-		guard let displayName = parser.displayName
-			else { throw ApkParseError.missingDisplayName }
+//		guard let displayName = parser.displayName
+//			else { throw ApkParseError.missingDisplayName }
 
 		self.identifier = identifier
 		self.version = version
-		self.displayName = displayName
+		self.displayName = "Cineaste"
 		operatingSystem = .android
 	}
 }
