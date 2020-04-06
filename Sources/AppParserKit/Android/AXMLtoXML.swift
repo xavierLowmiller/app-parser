@@ -100,6 +100,7 @@ private extension Array where Element == UInt8 {
 		var xmlLines = [#"<?xml version="1.0" encoding="utf-8"?>"#]
 
 		var currentNamespace: String? = nil
+		var namespaceUrl: String? = nil
 		var indentationLevel = 0
 
 		while !isEmpty {
@@ -115,7 +116,8 @@ private extension Array where Element == UInt8 {
 			case .startNamespace:
 				let prefix = nextWord()
 				let uri = nextWord()
-				currentNamespace = "xmlns:\(strings[Int(prefix)])=\"\(strings[Int(uri)])\""
+				currentNamespace = strings[Int(prefix)]
+				namespaceUrl = strings[Int(uri)]
 			case .endNamespace:
 				removeFirst(4) // class attribute, unused
 				removeFirst(4) // class attribute, unused
@@ -135,10 +137,22 @@ private extension Array where Element == UInt8 {
 						type: nextWord() >> 24,
 						data: nextWord()
 					).resolve(in: strings)
-				}.joined(separator: " ")
+				}
+				.map { $0.withNamespacePrefix(currentNamespace) }
+
+				let namespaceUrlAttribute: String?
+				if let _namespaceUrl = namespaceUrl {
+					namespaceUrlAttribute = "xmlns:\(currentNamespace!)=\"\(_namespaceUrl)\""
+					namespaceUrl = nil
+				} else {
+					namespaceUrlAttribute = nil
+				}
 
 				let name = strings[Int(tagName)]
-				xmlLines.append(spaces(for: indentationLevel) + "<\(name) \(attributes)>")
+				let tagContent = ([name, namespaceUrlAttribute] + attributes)
+					.compactMap { $0 }
+					.joined(separator: " ")
+				xmlLines.append(spaces(for: indentationLevel) + "<\(tagContent)>")
 				indentationLevel += 1
 			case .endTag:
 				indentationLevel -= 1
@@ -192,6 +206,16 @@ private extension Array where Element == UInt8 {
 
 private func spaces(for indentation: Int) -> String {
 	String([Character](repeating: " ", count: indentation * 4))
+}
+
+private extension String {
+	func withNamespacePrefix(_ prefix: String?) -> String {
+		if let prefix = prefix {
+			return prefix + ":" + self
+		} else {
+			return self
+		}
+	}
 }
 
 enum AxmlError: Error {
