@@ -85,7 +85,6 @@ private extension Array where Element == UInt8 {
 		let type: UInt32
 		let data: UInt32
 
-
 		func resolve(in strings: [String], namespace: String?, namespaceCode: UInt32?) -> String {
 			let key = strings[Int(self.key)]
 			let value: String
@@ -117,9 +116,9 @@ private extension Array where Element == UInt8 {
 	mutating func parseTags(strings: [String]) throws -> Data {
 		var xmlLines = [#"<?xml version="1.0" encoding="utf-8"?>"#]
 
-		var currentNamespace: String? = nil
-		var namespaceUrlCode: UInt32? = nil
-		var namespaceUrl: String? = nil
+		var currentNamespace: String?
+		var namespaceUrlCode: UInt32?
+		var namespaceUrl: String?
 		var indentationLevel = 0
 
 		while !isEmpty {
@@ -162,8 +161,8 @@ private extension Array where Element == UInt8 {
 				}
 
 				let namespaceUrlAttribute: String?
-				if let _namespaceUrl = namespaceUrl {
-					namespaceUrlAttribute = "xmlns:\(currentNamespace!)=\"\(_namespaceUrl)\""
+				if namespaceUrl != nil {
+					namespaceUrlAttribute = "xmlns:\(currentNamespace!)=\"\(namespaceUrl!)\""
 					namespaceUrl = nil
 				} else {
 					namespaceUrlAttribute = nil

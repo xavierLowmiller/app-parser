@@ -11,7 +11,7 @@ final class AndroidManifestParser: NSObject, XMLParserDelegate {
 		didStartElement elementName: String,
 		namespaceURI: String?,
 		qualifiedName qName: String?,
-		attributes: [String : String] = [:]) {
+		attributes: [String: String] = [:]) {
 
 		print("parsing <\(elementName)>:", attributes)
 
