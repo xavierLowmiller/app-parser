@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(FoundationXML)
+import FoundationXML
+#endif
 
 public enum ApkParser: Parser {
 	public static func parseMetadata(at path: String) throws -> AppMetadata {

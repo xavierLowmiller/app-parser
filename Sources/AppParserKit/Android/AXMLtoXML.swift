@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(FoundationXML)
+import FoundationXML
+#endif
 
 extension XMLParser {
 	convenience init(axml: Data) throws {
