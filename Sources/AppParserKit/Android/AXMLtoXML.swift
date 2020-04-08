@@ -43,11 +43,11 @@ private extension Array where Element == UInt8 {
 			+ [(styleOffset == 0 ? chunkSize : styleOffset) - stringOffset]
 
 		// Skip style offsets
-		removeFirst(Int(numberOfStyles) * 4)
+		removeFirst(numberOfStyles * 4)
 
 		let stringLengths = zip(offsets, offsets.dropFirst()).map { $1 - $0 }
 
-		let utf8Flag: UInt32 = 1 << 8
+		let utf8Flag = 1 << 8
 		let isUTF8 = (flags & utf8Flag) != 0
 
 		let strings: [String]
@@ -59,7 +59,7 @@ private extension Array where Element == UInt8 {
 
 		// Skip style data
 		if styleOffset != 0 {
-			removeFirst(Int(chunkSize - styleOffset))
+			removeFirst(chunkSize - styleOffset)
 		}
 
 		return strings
@@ -70,10 +70,10 @@ private extension Array where Element == UInt8 {
 		guard nextWord() == resourceSection else { throw AxmlError.invalidResourceSectionNumber }
 		let chunkSize = nextWord()
 		// Skip resource section
-		removeFirst(Int(chunkSize) - 8)
+		removeFirst(chunkSize - 8)
 	}
 
-	private enum TagType: UInt32 {
+	private enum TagType: Int {
 		case startNamespace = 0x00100100
 		case endNamespace = 0x00100101
 		case startTag = 0x00100102
@@ -82,14 +82,14 @@ private extension Array where Element == UInt8 {
 	}
 
 	private struct Attribute {
-		let uri: UInt32
-		let key: UInt32
-		let value: UInt32
-		let type: UInt32
-		let data: UInt32
+		let uri: Int
+		let key: Int
+		let value: Int
+		let type: Int
+		let data: Int
 
-		func resolve(in strings: [String], namespace: String?, namespaceCode: UInt32?) -> String {
-			let key = strings[Int(self.key)]
+		func resolve(in strings: [String], namespace: String?, namespaceCode: Int?) -> String {
+			let key = strings[self.key]
 			let value: String
 			switch type {
 			// Null
@@ -111,16 +111,16 @@ private extension Array where Element == UInt8 {
 				}
 			// String
 			case 3:
-				value = strings[Int(self.value)]
+				value = strings[self.value]
 			// Float
 			case 4:
-				value = "\(Float(bitPattern: self.value))"
+				value = "\(Float(bitPattern: UInt32(self.value)))"
 			// Dimension
 			case 5:
 				let radixTable: [Float] = [0.00390625, 3.051758E-005, 1.192093E-007, 4.656613E-010]
 				let dimensions = ["px", "dip", "sp", "pt", "in", "mm", "", ""]
-				let dimension = dimensions[Int(data & 0x0f)]
-				let amount = Float(data & 0xffffff00) * radixTable[Int((data >> 4) & 0x03)]
+				let dimension = dimensions[data & 0x0f]
+				let amount = Float(data & 0xffffff00) * radixTable[(data >> 4) & 0x03]
 				value = String(format: "%f", amount) + dimension
 			// Hex
 			case 17:
@@ -149,7 +149,7 @@ private extension Array where Element == UInt8 {
 		var xmlLines = [#"<?xml version="1.0" encoding="utf-8"?>"#]
 
 		var currentNamespace: String?
-		var namespaceUrlCode: UInt32?
+		var namespaceUrlCode: Int?
 		var namespaceUrl: String?
 		var indentationLevel = 0
 
@@ -166,9 +166,9 @@ private extension Array where Element == UInt8 {
 			case .startNamespace:
 				let prefix = nextWord()
 				let uri = nextWord()
-				currentNamespace = strings[Int(prefix)]
+				currentNamespace = strings[prefix]
 				namespaceUrlCode = uri
-				namespaceUrl = strings[Int(uri)]
+				namespaceUrl = strings[uri]
 			case .endNamespace:
 				removeFirst(4) // class attribute, unused
 				removeFirst(4) // class attribute, unused
@@ -200,7 +200,7 @@ private extension Array where Element == UInt8 {
 					namespaceUrlAttribute = nil
 				}
 
-				let name = strings[Int(tagName)]
+				let name = strings[tagName]
 				let tagContent = ([name, namespaceUrlAttribute] + attributes)
 					.compactMap { $0 }
 					.joined(separator: " ")
@@ -211,7 +211,7 @@ private extension Array where Element == UInt8 {
 				let tagUri = nextWord()
 				let tagName = nextWord()
 
-				let name = strings[Int(tagName)]
+				let name = strings[tagName]
 				xmlLines.append(spaces(for: indentationLevel) + "</\(name)>")
 			case .text:
 				break
@@ -223,15 +223,15 @@ private extension Array where Element == UInt8 {
 			.data(using: .utf8)!
 	}
 
-	private mutating func readUTF8String(length: UInt32) -> String {
-		defer { removeFirst(Int(length)) }
+	private mutating func readUTF8String(length: Int) -> String {
+		defer { removeFirst(length) }
 		let count = Int(self[1])
 		let chars = self[2..<count + 2]
 		return String(decoding: chars, as: UTF8.self)
 	}
 
-	private mutating func readUTF16String(length: UInt32) -> String {
-		defer { removeFirst(Int(length)) }
+	private mutating func readUTF16String(length: Int) -> String {
+		defer { removeFirst(length) }
 		func getUInt16(at offset: Int) -> UInt16 {
 			UInt16(self[offset + 1]) << 8 | UInt16(self[offset + 0])
 		}
@@ -243,16 +243,12 @@ private extension Array where Element == UInt8 {
 		return String(decoding: chars, as: UTF16.self)
 	}
 
-	private mutating func nextWord() -> UInt32 {
+	private mutating func nextWord() -> Int {
 		defer { removeFirst(4) }
-		return UInt32(self[3]) << 24
-			| UInt32(self[2]) << 16
-			| UInt32(self[1]) << 8
-			| UInt32(self[0]) << 0
-	}
-
-	mutating func skipWords(_ amount: UInt32) {
-		removeFirst(4 * Int(amount))
+		return Int(self[3]) << 24
+			| Int(self[2]) << 16
+			| Int(self[1]) << 8
+			| Int(self[0]) << 0
 	}
 }
 
@@ -275,5 +271,5 @@ enum AxmlError: Error {
 	case invalidStringSectionNumber
 	case invalidResourceSectionNumber
 	case invalidFileSizeChecksum
-	case unrecognizedTagType(UInt32)
+	case unrecognizedTagType(Int)
 }
