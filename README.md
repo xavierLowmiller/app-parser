@@ -11,10 +11,6 @@ Parses metadata from `.apk` and `.ipa` files
 $ app-parser example.ipa
 ```
 
-## 🚨🔥⚠️ Android notice
-
-For this
-
 ## Features
 
 | Android | iOS | Feature                   |
