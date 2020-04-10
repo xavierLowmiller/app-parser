@@ -1,4 +1,5 @@
 import Foundation
+import AXML
 #if canImport(FoundationXML)
 import FoundationXML
 #endif
@@ -9,7 +10,7 @@ public enum ApkParser: Parser {
 	}
 
 	private static func parseAPK(at path: String) throws -> AndroidManifestParser {
-		//		let filePattern = "AndroidManifest.xml */ic_launcher.png"
+//				let filePattern = "AndroidManifest.xml */ic_launcher.png"
 		let tempFile = try unzip(at: path, filePattern: "")
 		defer { try? tempFile.deleteDirectory() }
 
@@ -28,7 +29,8 @@ public enum ApkParser: Parser {
 		do {
 			let manifestURL = tempFile.directoryURL.appendingPathComponent("AndroidManifest.xml")
 			let axml = try Data(contentsOf: manifestURL)
-			let parser = try XMLParser(axml: axml)
+            let xml = try axmlToXml(axml)
+			let parser = XMLParser(data: xml)
 
 			let delegate = AndroidManifestParser()
 			parser.delegate = delegate

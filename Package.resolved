@@ -9,6 +9,15 @@
           "revision": "35b76bf577d3cc74820f8991894ce3bcdf024ddc",
           "version": "0.0.2"
         }
+      },
+      {
+        "package": "AXML",
+        "repositoryURL": "https://github.com/xavierLowmiller/swift-axml-converter",
+        "state": {
+          "branch": null,
+          "revision": "deed132a00252da06f54369351ad396ef8b37fde",
+          "version": "1.0.0"
+        }
       }
     ]
   },
