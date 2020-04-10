@@ -9,6 +9,9 @@ public struct AppParser: ParsableCommand {
 	@Argument()
 	var path: String
 
+	@Option()
+	var aaptPath: String?
+
 	public func run() throws {
 
 		let metadata: AppMetadata
@@ -17,7 +20,7 @@ public struct AppParser: ParsableCommand {
 		case _ where path.hasSuffix(".ipa"):
 			metadata = try IpaParser.parseMetadata(at: path)
 		case _ where path.hasSuffix(".apk"):
-			fatalError("TODO: Implement Android parsing")
+			metadata = try ApkParser.parseMetadata(at: path, aaptPath: aaptPath)
 		default:
 			throw UnsupportedError(path: path)
 		}

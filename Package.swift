@@ -12,23 +12,25 @@ let package = Package(
 		.executable(name: "app-parser", targets: ["Run"])
 	],
 	dependencies: [
-		.package(url: "https://github.com/apple/swift-argument-parser", from: "0.0.2")
+        .package(url: "https://github.com/apple/swift-argument-parser", from: "0.0.2"),
+        .package(url: "https://github.com/xavierLowmiller/swift-axml-converter", from: "1.0.0")
 	],
 	targets: [
-		.target(name: "AppParserKit"),
+        .target(name: "AppParserKit", dependencies: ["AXML"]),
 		.target(
 			name: "AppParser",
 			dependencies: [
-				.target(name: "AppParserKit"),
+				"AppParserKit",
 				.product(name: "ArgumentParser", package: "swift-argument-parser")
 			]
 		),
 		.target(name: "Run", dependencies: ["AppParser"]),
+
 		.testTarget(
 			name: "AppParserTests",
-			dependencies: [.target(name: "AppParser")]),
+			dependencies: ["AppParser"]),
 		.testTarget(
 			name: "AppParserKitTests",
-			dependencies: [.target(name: "AppParserKit")])
+			dependencies: ["AppParserKit"])
 	]
 )
